@@ -1,0 +1,162 @@
+{include file="common/head"/}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>发布计划</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label style="width: 130px;" class="layui-form-label">宝贝标题</label>
+            <div class="layui-input-4">
+                <input type="text" name="goods_name" value="{$info.goods_name}" lay-verify="required" disabled class="layui-input layui-input-bj">
+            </div>
+            <div class="layui-form-mid layui-word-aux red"></div>
+        </div>
+        <div class="layui-form-item">
+            <label style="width: 130px;" class="layui-form-label">宝贝ID</label>
+            <div class="layui-input-4">
+                <input type="text" name="goods_id" value="{$info.goods_id}" lay-verify="required" disabled class="layui-input layui-input-bj">
+            </div>
+            <div class="layui-form-mid layui-word-aux red"></div>
+        </div>
+        <div class="layui-form-item">
+            <label style="width: 130px;" class="layui-form-label">商品主图</label>
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <div class="layui-upload-list">
+                        <div class="item">
+                            <div class="pic">
+                                <img class="layui-upload-img" src="{if $info.goods_pic}{$info.goods_pic}{else}__STATIC__/images/no_image.gif{/if}" id="viewPic">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label style="width: 130px;" class="layui-form-label">要求完成日期</label>
+            <div class="layui-input-4">
+                <input type="text" name="begin_time" id="begin_time" value="" lay-verify="required" placeholder="" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux red"></div>
+        </div>
+        <div class="layui-form-item">
+            <label style="width: 130px;" class="layui-form-label">搜索关键字：</label>
+            <div class="layui-input-inline">
+                &nbsp;&nbsp;
+                <button type="button" class="layui-btn diff_btn layui-btn-normal">增加一个
+                </button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-6">
+                <table id="keyword_diff" class="layui-table">
+                    <thead>
+                    <tr>
+                        <th>商品关键字</th>
+                        <th>商品SKU</th>
+                        <th>任务数量</th>
+                        <th>商品价格</th>
+                        <th>商品件数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    {notempty name="word"}
+                    {foreach name="word" key="key" item="item"}
+                    <tr>
+                        <td><input lay-verify="required|search_str" class="layui-input w200" name="keyword[name][]" value="{$item}"></td>
+                        <td><input lay-verify="required|search_str" class="layui-input w200" name="keyword[sku][]" value=""></td>
+                        <td><input type="number" lay-verify="required|int_number" class="layui-input w100" name="keyword[count][]" value="1"></td>
+                        <td><input type="number" lay-verify="required|int_number" class="layui-input w100" value="{$info.goods_price}" name="keyword[goods_price][]"/></td>
+                        <td><input type="number" lay-verify="required|int_number" class="layui-input w100" value="1" name="keyword[goods_num][]"/></td>
+                        <td><a onclick="delCols($(this))" href="javascript:;">删除</a></td>
+                    </tr>
+                    {/foreach}
+                    {/notempty}
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" data-type="submit" lay-filter="submit">立即发布</button>
+                <a href="{:url('Tpl/tplList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+<img alt="" style="display:none" id="displayimg" src="" />
+<script src="__STATIC__/js/jquery.2.1.1.min.js"></script>
+
+<script>
+    layui.use(['form', 'layer', 'laydate','upload'], function () {
+        var form = layui.form, $ = layui.jquery, laydate = layui.laydate,upload = layui.upload;
+        var now = new Date();
+        var time = now.getFullYear() + "-" +((now.getMonth()+1)<10?"0":"")+(now.getMonth()+1)+"-"+(now.getDate()<10?"0":"")+now.getDate();
+        laydate.render({
+            elem: '#begin_time',
+            type: 'date',
+            value: time,
+            trigger: 'click'
+        });
+        //提交模板
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            data.field.tpl_id = "{$info.id}";
+            data.field.sub_type=$(this).data('type');
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+        //搜索词添加
+        //找茬设置 新增行
+        $(".diff_btn").on('click', function () {
+            var _html = '<tr>';
+            _html += '<td><input lay-verify="required|search_str" class="layui-input w200" name="keyword[name][]" value=""></td>';
+            _html += '<td><input lay-verify="required|search_str" class="layui-input w200" name="keyword[sku][]" value=""></td>';
+            _html += '<td><input type="number" lay-verify="required|int_number" class="layui-input w100" name="keyword[count][]" value="1"></td>';
+            _html += '<td><input type="number" lay-verify="required|int_number" class="layui-input w100" value="{$info.goods_price}" name="keyword[goods_price][]"/></td>';
+            _html += '<td><input type="number" lay-verify="required|int_number" class="layui-input w100" value="1" name="keyword[goods_num][]"/></td>';
+            _html += '<td><a onclick="delCols($(this))"  href="javascript:;">删除</a></td>';
+            _html += '</tr>';
+            $("#keyword_diff").append(_html);
+        });
+        //删除行
+        function delCols(obj) {
+            obj.parents('tr').remove();
+        }
+        //验证
+        form.verify({
+            int_number: function (value, item) {
+                if (value <= 0) {
+                    return '只能输入大于0的数字';
+                }
+            },
+            search_str: function (value, item) {
+//                var _tmpStr="{$info.goods_name}";
+//                var wordArr=value.split("");
+//                var step=true;
+//                wordArr.forEach(function(value,i){
+//                    if(_tmpStr.indexOf(value) < 0 && $.trim(value)!=''){
+//                        step=false;
+//                    }
+//                });
+//                if(!step){
+//                    return '请使用宝贝标题内的文本作为关键词';
+//                }
+            }
+        });
+
+    });
+
+
+
+</script>
+{include file="common/foot"/}

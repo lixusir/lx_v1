@@ -1,0 +1,85 @@
+{include file="common/head"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">用户ID</label>
+            <div class="layui-input-inline">
+              <input type="text" name="user_id" placeholder="请输入用户ID" autocomplete="off"
+                     class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">用户手机</label>
+            <div class="layui-input-inline">
+              <input type="text" name="mobile" placeholder="请输入用户手机" autocomplete="off"
+                     class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">变动时间</label>
+            <div class="layui-input-inline">
+              <input type="text" name="time" id="time" placeholder="请点击选择时间区间" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <table id="list" lay-filter="list"></table>
+      </div>
+    </div>
+  </div>
+<script type="text/html" id="exc_money">
+  {{# if(d.exc_money > 0){ }}
+  +{{d.exc_money}}
+  {{#  } else if(d.exc_money < 0) { }}
+  {{d.exc_money}}
+  {{#  } }}
+</script>
+  <script>
+    layui.use(['index', 'table', 'form','util','laydate'], function () {
+      var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+      var tableIn = table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Member/accountList")}',
+              method: 'post',
+              cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field: "id", width: 80, title: "流水ID"},
+                {field: "user_id", width: 80, title: "用户ID"},
+                {field: "mobile", width: 120, title: "手机号码"},
+                {field: "old_money", title: "原余额"},
+                {field: "exc_money", title: "操作金额", toolbar: "#exc_money"},
+                {field: "user_money", title: "变更后余额"},
+                {field: "create_time", title: "变更时间"},
+                {field: "desc", width: 450, title: "变更原因"},
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+      );
+      var laydate = layui.laydate;
+      //日期范围
+      laydate.render({
+        elem: '#time'
+        , range: true
+      });
+      //监听搜索
+      form.on('submit(search)', function (data) {
+        var field = data.field;
+        //执行重载
+        tableIn.reload({
+          where: field
+        });
+      });
+    });
+  </script>
+{include file="common/foot"}

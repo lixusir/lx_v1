@@ -1,0 +1,294 @@
+{include file="common/head"/}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>新增/编辑/团长/业务员</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">基本信息</li>
+                <li>个人信息</li>
+                <li>认证信息</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">手机号码</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="mobile" autocomplete="off" value="{$info.mobile}" lay-verify="required"
+                                   placeholder="请输入手机号码" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">*必填</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">真实姓名</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="real_name" autocomplete="off" value="{$info.real_name}" lay-verify="required" placeholder="请输入真实姓名" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">*必填</div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">登录密码</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="password" value="" {empty name="info.id" }lay-verify="required" {/empty}placeholder="请设置商家登录密码" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">{if !$info.id}*必填{/if}</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">是否拉黑</label>
+                        <div class="layui-input-inline">
+                            {volist name="linkage.is_back" id="vo"}
+                            <input type="radio" name="is_back" value="{$key}" title="{$vo}" {if $info.is_back==$key}checked{/if}>
+                            {/volist}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">拉黑用户，让其无法领取任务</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select name="status">
+                                {foreach name="linkage.status" key="key" item="item"}
+                                <option value="{$key}" {if $info.status==$key}selected{/if}>{$item}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">使用禁用功能，可以禁用用户登录</div>
+                    </div>
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邀请权限</label>
+                        <div class="layui-input-inline">
+                            {volist name="linkage.invite_auth" id="vo"}
+                            <input type="radio" name="invite_auth" value="{$key}" title="{$vo}" {if $info.invite_auth==$key}checked{/if}>
+                            {/volist}
+                        </div>
+                        <div class="layui-form-mid layui-word-aux"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">类型</label>
+                        <div class="layui-input-4">
+                            {volist name="linkage.user_type" id="vo"}
+                            <input type="radio" name="user_type" value="{$key}" title="{$vo}" {if $info.user_type==$key || $type==$key}checked{/if}>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">任务金额</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="money_limit" autocomplete="off" value="{$info.money_limit}" placeholder="任务金额限制" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux">进行中的任务超过该值，将接不到新任务（只针对刷手）</div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邀请人ID</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="first_leader" autocomplete="off" value="{$info.first_leader}" placeholder="请输入邀请人ID" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">刷手备注</label>
+                        <div class="layui-input-4">
+                            <textarea name="users_remark" placeholder="刷手备注" class="layui-textarea">{$info.users_remark}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-4">
+                            {volist name="linkage.sex" id="vo"}
+                            <input type="radio" name="sex" value="{$key}" title="{$vo}" {if $info.sex==$key}checked{/if}>
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">省/市/区</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <select lay-filter="province" name="province">
+                                    <option value="">请选择省份</option>
+                                    {volist name="provinces" id="vo"}
+                                    <option value="{$vo.provinceid}" {if condition="$info['province'] eq $vo.provinceid" }selected{/if}>{$vo.province}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <select lay-filter="city" name="city" id="city">
+                                    <option value="">请选择城市</option>
+                                    {volist name="cities" id="vo"}
+                                    <option value="{$vo.cityid}" {if condition="$info['city'] eq $vo.cityid" }selected{/if}>{$vo.city}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">QQ号码</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="qq" value="{$info.qq}" placeholder="请输入QQ号码" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">微信</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="wechat" value="{$info.wechat}"  placeholder="请输入微信" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">淘宝号</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="tb_user" value="{$info.tb_user}" placeholder="请输入旺旺名" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">芝麻信用</label>
+                        <div class="layui-input-4">
+                            <input type="text" name="tb_credit" value="{$info.tb_credit}" placeholder="请输入芝麻信用" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <div class="layui-input-5">
+                            <table class="layui-table">
+                                <div class="layui-form-item">
+                                    <label style="width: 130px;" class="layui-form-label">身份证号码：</label>
+                                    <div class="layui-input-4">
+                                        <input type="text" name="card_no" value="{$info.card_no}" class="layui-input">
+                                    </div>
+                                </div>
+                                <thead>
+                                <tr>
+                                    <th>身份证正面</th>
+                                    <th>身份证反面</th>
+                                    <th>摆pose照</th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td><a target="_blank" href="{$info.front|default='__STATIC__/images/front.gif'}"><img class="layui-upload-img" src="{$info.front|default='__STATIC__/images/front.jpg'}"/></a> </td>
+                                    <td><a target="_blank" href="{$info.reverse|default='__STATIC__/images/back.jpg'}"><img class="layui-upload-img" src="{$info.reverse|default='__STATIC__/images/back.jpg'}"/></a> </td>
+                                    <td><a target="_blank" href="{$info.pose|default='__STATIC__/images/avatar_default.png'}"><img class="layui-upload-img" src="{$info.pose|default='__STATIC__/images/avatar_default.png'}"/></a> </td></td>
+                                </tr>
+                            </table>
+                            <input type="hidden" name="front" value="{$info.front}" />
+                            <input type="hidden" name="reverse" value="{$info.reverse}" />
+                            <input type="hidden" name="pose" value="{$info.pose}" />
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label style="width: 130px;" class="layui-form-label">身份证审核:</label>
+                        <div class="layui-input-inline">
+                            <select name="card_status">
+                                {volist name="linkage.card_status" id="vo"}
+                                <option value="{$key}" {if $info.card_status==$key}selected{/if}>{$vo}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label style="width: 130px;" class="layui-form-label">审核备注：</label>
+                        <div class="layui-input-4">
+                            <textarea name="card_remark" style="height: 60px;" placeholder="实名审核操作备注" class="layui-textarea">{$info.card_remark}</textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-5">
+                            <table class="layui-table">
+                                <thead>
+                                <tr>
+                                    <th>户名</th>
+                                    <th>开户银行</th>
+                                    <th>银行卡号</th>
+                                </tr>
+                                </thead>
+                                <tr>
+                                    <td>
+                                        {$info.real_name}
+                                    </td>
+                                    <td>
+                                        <input class="layui-input" type="text" placeholder="开户银行 如：建设银行XX支行" name="bank_name" value="{$info.bank_name}"/>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="bank_number" value="{$info.bank_number}" placeholder="银行卡号" class="layui-input">
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-form-item">
+                            <label style="width: 130px;" class="layui-form-label">银行卡审核:</label>
+                            <div class="layui-input-inline">
+                                <select id="bank_status" name="bank_status">
+                                    {volist name="linkage.bank_status" id="vo"}
+                                    <option value="{$key}" {if $info.bank_status==$key}selected{/if}>{$vo}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label style="width: 130px;" class="layui-form-label">审核备注：</label>
+                        <div class="layui-input-4">
+                            <textarea  name="bank_remark" style="height: 60px;"  placeholder="银行卡审核操作备注" class="layui-textarea">{$info.bank_remark}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <input type="hidden" name="id" value="{$info.id}"/>
+                        <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                        <a href="{if $type==2}{:url('Member/tuanList')}{else}{:url('Member/userList')}{/if}" class="layui-btn layui-btn-primary">返回列表</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer', 'laydate', 'upload'], function () {
+        var form = layui.form, $ = layui.jquery, laydate = layui.laydate, upload = layui.upload;
+        //提交模板
+        form.on('submit(submit)', function (data) {
+            if(data.field.card_status==2 && data.field.card_remark==''){
+                return layer.msg('身份认证不通过的原因必须填写', {time: 1800, icon: 2});
+            }
+            if(data.field.bank_status==2 && data.field.taobao_remark==''){
+                return layer.msg('银行卡审核不通过原因必须填写', {time: 1800, icon: 2});
+            }
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+
+        //获取城市联动
+        form.on('select(province)',function(data){
+            var provinceid = data.value;
+            $.post('{:url("Common/getCityAreaTree")}',{provinceid:provinceid},function(res){
+                var city = '<option value="">请选择城市</option>';
+                for(var i=0; i<res.length; i++){
+                    city += "<option value='"+ res[i]['cityid']+"'>"+ res[i]['city']+ "</option>";
+                }
+                $("#city").empty().append(city);
+                form.render();
+            },'JSON');
+
+        });
+
+
+
+    });
+</script>
+{include file="common/foot"/}

@@ -1,0 +1,103 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>规则添加/编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属上级</label>
+                <div class="layui-input-4">
+                    <select name="pid">
+                        <option value=''>请选择</option>
+                        {volist name="rule" id="vo"}
+                        <option value="{$vo.id}" {if $info.pid==$vo.id}selected{/if}>{$vo.space}|--{$vo.name}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux red">留空为顶级类目</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="name" value="{$info.name}" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">类型</label>
+                <div class="layui-input-4">
+                    <select lay-verify="required" name="type">
+                        <option value=''>请选择{$info.type}</option>
+                        {volist name="linkage.type" id="vo"}
+                        <option value="{$key}" {if $info.type ==$key}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">链接</label>
+                <div class="layui-input-4">
+                    <input type="text" name="link" value="{$info.link}" lay-verify="required" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">控制器与操作方法,例：System/index</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">ICON名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="icon" value="{$info.icon}" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">图标样式的名称</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-4">
+                    <input type="text" name="sort" value="{$info.sort|default=50}" placeholder="" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">是否展开</label>
+                <div class="layui-input-4">
+                    {volist name="linkage.spread" id="vo"}
+                    <input type="radio" name="spread" value="{$key}" title="{$vo}" lay-verify="required" {if $info.spread==$key}checked{elseif $key==0}checked{/if}>
+                    {/volist}
+                </div>
+                <div class="layui-form-mid layui-word-aux red">菜单是否展开</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-4">
+                    {volist name="linkage.status" id="vo"}
+                    <input type="radio" name="status" value="{$key}" title="{$vo}" lay-verify="required" {if $info.status==$key}checked{elseif $key==1}checked{/if}>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('System/ruleList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer', 'upload'], function () {
+        var form = layui.form, $ = layui.jquery, upload = layui.upload;
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

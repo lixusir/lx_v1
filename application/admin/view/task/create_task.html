@@ -1,0 +1,51 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+  <div class="layui-card">
+    <blockquote class="layui-elem-quote">您当前共有<span class="quote-span" id="stay-goods">0</span>个商品待分配，本次共分配了<span class="quote-span" id="already-goods">0</span>个商品，生成了<span class="quote-span" id="task-num">0</span>个任务单，还有<span class="quote-span" id="not-goods">0</span>个商品未分配。</blockquote>
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">几合一</label>
+          <div class="layui-input-inline">
+            <select name="unite" lay-verify="required" id="unite">
+              <option value="">请选择</option>
+              {foreach name="linkage.unite" key="key" item="item"}
+              <option value="{$key}">{$item}</option>
+              {/foreach}
+            </select>
+          </div>
+        </div>
+        <div class="layui-inline">
+          <a class="layui-btn" id="createTask"><i class="layui-icon layui-icon-console layuiadmin-button-btn"></i>生成</a>
+        </div>
+        <div class="layui-inline">
+          <a class="layui-btn layui-btn-warm" id="subTask"><i class="layui-icon layui-icon-form layuiadmin-button-btn"></i>确认提交</a>
+        </div>
+      </div>
+    </div>
+    <div class="layui-card-body">
+      <div><h3>任务单预览</h3></div>
+      <div id="task-main">
+
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  layui.use(['index', 'table', 'form','util'], function () {
+    var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+    //生成任务单
+    $("#createTask").on('click',function(){
+       var unite = $("#unite").val();
+      if(unite=="" || typeof(unite)=='undefined'){
+        layer.msg('请选择几合一',{time:1500,icon:2});
+        return false;
+      }
+      $.post("{:url('Task/ajaxPlanList')}",{unite:unite},function(res){
+           $("#task-main").html(res);
+      });
+    });
+
+  });
+</script>
+{include file="common/foot"/}

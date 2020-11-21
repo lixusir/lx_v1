@@ -1,0 +1,82 @@
+{include file="common/head"/}
+<style>
+    .edui-editor{z-index: 1!important;}
+</style>
+<script src="__STATIC__/ueditor/ueditor.config.js" type="text/javascript"></script>
+<script src="__STATIC__/ueditor/ueditor.all.js" type="text/javascript"></script>
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>提交/编辑工单</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">工单标题</label>
+            <div style="width:400px;" class="layui-input-inline">
+                <input type="text" name="title" value="{$info.title}" lay-verify="required" placeholder="请输入工单标题" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">*必填</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-inline">
+                <select name="type" lay-verify="required">
+                    <option value="">请选择</option>
+                    {foreach name="linkage.type" key="key" item="item"}
+                    <option {if condition="$info.type eq $key"} selected {/if}  value="{$key}">{$item}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">工单内容</label>
+            <div class="layui-input-inline">
+                <textarea lay-verify="required" id="content" name="content"  placeholder="">{$info.content}</textarea>
+            </div>
+            <div class="layui-form-mid layui-word-aux">*必填</div>
+            <script>
+                var options = {
+                    initialFrameWidth:850, //初化宽度
+                    initialFrameHeight: 250, //初化高度
+                }
+                var editor = new UE.ui.Editor(options);
+                editor.render("content");
+            </script>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('WorkOrder/index')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer','laydate'], function () {
+        var form = layui.form, layer = layui.layer,$= layui.jquery;
+        var laydate=layui.laydate;
+        var accept_time={
+            elem: '#accept_time',
+            type:'datetime',
+            trigger: 'click',
+            value: new Date()
+        }
+        laydate.render(accept_time);
+        form.on('submit(submit)', function (data) {
+            var loading =layer.load(1, {shade: [0.1,'#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        })
+    });
+</script>
+
+{include file="common/foot"/}

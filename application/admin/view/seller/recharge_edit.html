@@ -1,0 +1,113 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>充值编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="seller_name" value="{$info.seller_name}" disabled class="layui-input layui-input-bj">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">充值金额</label>
+                <div class="layui-input-4">
+                    <input type="text" name="money" value="{$info.money}" disabled class="layui-input layui-input-bj">
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">付款人姓名</label>
+                <div class="layui-input-4">
+                    <input type="text" name="real_name" value="{$info.real_name}" disabled class="layui-input layui-input-bj">
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">转账凭证</label>
+                <div class="layui-input-4">
+                    <div class="layui-upload">
+                        <div class="layui-upload-list">
+                            &nbsp;
+                            <a target="_blank" href="{$info.cert_pic}"><img class="layui-upload-img" src="{$info.cert_pic}" width="500" height="400" /></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-mid layui-word-aux red">点击图片可查看大图</div>
+
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">转入账户</label>
+                <div class="layui-input-4">
+                    <table style="margin-left: 10px;margin-top: 0px;" class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>账户名</th>
+                            <th>银行名称</th>
+                            <th>账号</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td><input type="hidden" name="bank_id" value=""/>{$info.bank_account_name}</td>
+                            <td>{$info.bank_name}</td>
+                            <td>{$info.bank_number}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">充值状态</label>
+                <div class="layui-input-4">
+                    <select lay-verify="required" name="status">
+                        <option value=''>请选择</option>
+                        {volist name="linkage.status" id="vo"}
+                        <option value="{$key}" {if $info.status==$key}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">处理备注</label>
+                <div class="layui-input-4">
+                    <textarea name="remarks" id="remarks" placeholder="请输入处理备注" class="layui-textarea">{$info.remarks}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('Seller/rechargeList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

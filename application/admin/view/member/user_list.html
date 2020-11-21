@@ -1,0 +1,252 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li {eq name="$type" value="1" } class="layui-this" {/eq}><a href="{:url('Member/userList')}?type=1">全部</a></li>
+                <li {eq name="$type" value="2" } class="layui-this" {/eq}><a href="{:url('Member/userList')}?type=2">已审核</a></li>
+                <li {eq name="$type" value="3" } class="layui-this" {/eq}><a href="{:url('Member/userList')}?type=3">待审核</a></li>
+                <li {eq name="$type" value="4" } class="layui-this" {/eq}><a href="{:url('Member/userList')}?type=4">审核不通过</a></li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">手机号码</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="mobile" placeholder="请输入手机号码" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">真实姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="real_name" placeholder="请输入真实姓名" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">邀请人ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="first_leader" placeholder="请输入邀请人ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">淘宝号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="tb_user" placeholder="请输入淘宝号" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">状态</label>
+                            <div class="layui-input-inline">
+                                <select name="status">
+                                    <option value="">请选择</option>
+                                    {foreach name="linkage.status" key="key" item="item"}
+                                    <option value="{$key}">{$item}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">实名认证</label>
+                            <div class="layui-input-inline">
+                                <select name="is_real">
+                                    <option value="">请选择</option>
+                                    {foreach name="linkage.is_real" key="key" item="item"}
+                                    <option value="{$key}">{$item}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">黑名单</label>
+                            <div class="layui-input-inline">
+                                <select name="is_back">
+                                    <option value="">请选择</option>
+                                    {foreach name="linkage.is_back" key="key" item="item"}
+                                    <option value="{$key}">{$item}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">用户ID</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="user_id" placeholder="请输入用户ID" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card-body">
+                    <div class="layui-card-header layuiadmin-card-header-auto">
+                        <a class="layui-btn" href="{:url('Member/userEdit')}?type=1">添加业务员</a>
+                    </div>
+                    <table id="list" lay-filter="list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a href="{:url('Member/userEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+<script type="text/html" id="status">
+    {{# if(d.status==1){ }}
+    <button class="layui-btn  layui-btn-xs">{{d.status_text}}</button>
+    {{#  } else if(d.status==0) { }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">{{d.status_text}}</button>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="is_real">
+    {{# if(d.is_real==1){ }}
+    <button class="layui-btn layui-btn-xs">已认证</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-primary layui-btn-xs">待认证</button>
+    {{#  } }}
+</script>
+
+<script type="text/html" id="is_back">
+    {{# if(d.is_back==1){ }}
+    <button class="layui-btn layui-btn-danger layui-btn-xs">是</button>
+    {{#  } else if(d.is_back==0) { }}
+    <button class="layui-btn layui-btn-primary layui-btn-xs">否</button>
+    {{#  } }}
+</script>
+
+<script>
+    layui.use(['index', 'table', 'form','util'], function () {
+        var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+        var tableIn = table.render({
+                id: 'list',
+                elem: "#list",
+                url: '{:url("Member/userList")}?type={$type}',
+                method: 'post',
+                cols: [[
+                    {type: "checkbox", fixed: "left"},
+                    {field: "id", width: 80, title: "用户ID"},
+                    {field: "real_name", width: 100, title: "真实姓名"},
+                    {field: "mobile", width: 120, title: "手机号码"},
+                    {field: "bank_name", width: 150, title: "开户行"},
+                    {field: "bank_number", minWidth: 180, title: "银行卡"},
+                    {field: "tb_user", width: 120, title: "淘宝号"},
+                    {field: "user_money", width: 100, title: "用户金额"},
+                    {field: "is_real", width: 100, title: "实名认证", toolbar: "#is_real"},
+                    {field: "is_back", width: 75, title: "黑名单", align: "center", toolbar: "#is_back"},
+                    {field: "status", width: 80, title: "状态", align: "center", toolbar: "#status"},
+                    {field: "create_time", width: 160, title: "创建时间"},
+                    {field: "rec_id", width: 80, title: "推荐人"},
+                    {field: "first_leader", width: 80, title: "邀请ID"},
+                    {field: "users_remark", width: 150, title: "刷手备注"},
+                    {title: "操作",minWidth:230, align: "center", toolbar: "#barDemo"}
+                ]],
+                page: true,
+                limit: 100,
+                limits: [10, 40, 60, 80, 100],
+            }
+        );
+
+        //监听搜索
+        form.on('submit(search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('list', {
+                where: field
+            });
+        });
+
+        //监听表格内的事件  如 编辑 删除等
+        table.on('tool(list)', function (obj) {
+            var data = obj.data;
+            //删除
+            if (obj.event === 'del') {
+                layer.confirm('您确定要删除该内容吗？', function (index) {
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post("{:url('userDel')}", {id: data.id}, function (res) {
+                        layer.close(loading);
+                        if (res.code === 1) {
+                            layer.msg(res.msg, {time: 1000, icon: 1});
+                            table.reload('list');
+                        } else {
+                            layer.msg('操作失败！', {time: 1000, icon: 2});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }else if(obj.event === 'my_sun'){
+                var _url="{:url('User/sunList')}?id="+data.id;
+                var w=($(window).width()*0.6);
+                var h=($(window).height() - 200);
+                layer.open({
+                    type: 2
+                    ,title: '下级好友'
+                    ,content: _url
+                    ,maxmin: true
+                    ,area: [w+'px', h +'px']
+                });
+            }
+
+        });
+
+        form.on('submit(export)', function (data) {
+            var field = data.field;
+            layer.confirm('确定要导出符合条件的用户？', {icon: 3}, function (index) {
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                $.post("{:url("User/export")}?type={$type}", field, function (res) {
+                    layer.close(loading);
+                    if (res.code === 1) {
+                        layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                            window.location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1000, icon: 2});
+                    }
+                });
+                layer.close(index);
+            });
+        });
+        
+        $('.layui-btn.layuiadmin-btn-list').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+        var active = {
+            //批量删除
+            delAll: function () {
+                var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+                var ids = [];
+                $(checkStatus.data).each(function (i, o) {
+                    ids.push(o.id);
+                });
+                if (ids.length === 0) {
+                    return layer.msg('请选择要删除的内容');
+                }
+                layer.confirm('确认要删除选中内容吗？', {icon: 3}, function (index) {
+                    layer.close(index);
+                    var loading = layer.load(1, {shade: [0.1, '#fff']});
+                    $.post("{:url('userDel')}", {ids: ids}, function (data) {
+                        layer.close(loading);
+                        if (data.code === 1) {
+                            layer.msg(data.msg, {time: 1000, icon: 1});
+                            table.reload('list');
+                        } else {
+                            layer.msg(data.msg, {time: 1000, icon: 2});
+                        }
+                    });
+                });
+            }
+        };
+
+    });
+</script>
+{include file="common/foot"/}

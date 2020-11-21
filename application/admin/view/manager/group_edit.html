@@ -1,0 +1,83 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>添加/编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户组名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="name" value="{$info.name}" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <fieldset class="layui-elem-field">
+                    <legend>用户组权限 - 请勾选组权限</legend>
+                    <div class="layui-field-box">
+                        <div id="group"></div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-4">
+                    {volist name="linkage.status" id="vo"}
+                    <input type="radio" name="status" value="{$key}" title="{$vo}" lay-verify="required" {if $info.status==$key}checked{elseif $key==1}checked{/if}>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('Manager/groupList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer','tree'], function () {
+        var form = layui.form, $ = layui.jquery ,tree = layui.tree;
+        //用户组权限选择树
+        var group_data = '{$group_arr}';
+        var group_ids = '';
+        var group_tree = tree.render({
+            elem: '#group'  //绑定元素
+            ,showCheckbox: true  //是否显示复选框
+            ,data: JSON.parse(group_data )
+            ,id: 'group_id'
+            // ,oncheck: function(obj){
+            //     console.log(obj.elem);
+            //     return false;
+            //     var check_status = obj.checked;
+            //     if(check_status==true){
+            //         group_ids += obj.data.id +',';
+            //     }else{
+            //         group_ids = group_ids.replace(obj.data.id +',','');
+            //     }
+            // }
+        });
+        var gid = '{$check_gid}';
+        gid = JSON.parse(gid);
+        tree.setChecked('group_id', gid); //批量勾选 id 为 2、3 的节点
+        //提交
+        form.on('submit(submit)', function (data) {
+            //获得选中的节点
+            var group_data = tree.getChecked('group_id');
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", {id:data.field.id,name:data.field.name,status:data.field.status,group_data:group_data}, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

@@ -1,0 +1,52 @@
+<div class="task-main">
+    {volist name="result.data" id="vo"}
+    <div class="t-box">
+        <div class="t-info">任务单号：{$vo.task_sn}，执行人：{$vo.user_name}，状态：正在进行中 本任务合计：{$vo.total_price}元</div>
+        {if $vo.goods}
+        <div class="goods-list">
+            <div class="g-item">
+                <span class="w-10">商品图片</span>
+                <span class="w-25">商品名称</span>
+                <span class="w-10">关键词</span>
+                <span class="w-15">店铺名称</span>
+                <span class="w-9">SKU</span>
+                <span class="w-9">下单数</span>
+                <span class="w-12">要求完成日期</span>
+                <span class="w-10">下单金额</span>
+            </div>
+            {volist name="vo.goods" id="vvo"}
+            <div class="g-item">
+                <span class="w-10"><img src="{$vvo.goods_pic}"/></span>
+                <span class="w-25 g-tit" title="{$vvo.goods_name}">{$vvo.goods_name}</span>
+                <span class="w-10">{$vvo.keyword}</span>
+                <span class="w-15">{$vvo.shop_name}</span>
+                <span class="w-9">{$vvo.goods_sku}</span>
+                <span class="w-9">{$vvo.goods_num}</span>
+                <span class="w-12">2019-11-22</span>
+                <span class="w-10">{$vvo.money}</span>
+            </div>
+            {/volist}
+        </div>
+        {/if}
+    </div>
+    {/volist}
+</div>
+<input type="hidden" id="g-total" value="{$result.goods_total}" />
+<input type="hidden" id="al_goods" value="{$result.already_goods}" />
+<input type="hidden" id="t-total" value="{$result.task_total}" />
+<script>
+    layui.use(['index', 'table', 'form','util'], function () {
+        var table = layui.table, form = layui.form, util = layui.util, $ = layui.jquery;
+        var g_total = $("#g-total").val();
+        var g_already = $("#al_goods").val();
+        var t_total = $("#t-total").val();
+        var no_goods = g_total-g_already;
+        console.log(g_total);
+        $("#stay-goods").html(g_total);//待分配商品数
+        $("#already-goods").html(g_already);//已分配商品数
+        $("#not-goods").html(no_goods);//未分配商品数
+        $("#task-num").html(t_total);//任务单数
+
+
+    });
+</script>

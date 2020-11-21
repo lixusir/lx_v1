@@ -1,0 +1,74 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <div class="layui-tab-content">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">联盟成员</label>
+              <div class="layui-input-inline">
+                <input type="text" name="admin_name" placeholder="请输入联盟成员名称" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">团队负责人</label>
+              <div class="layui-input-inline">
+                <input type="text" name="user_name" placeholder="请输入团队负责人名称" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">日期</label>
+              <div class="layui-input-inline">
+                <input type="text" name="time" placeholder="请输入日期区间值" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-card-body">
+          <table id="list" lay-filter="list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  layui.use(['index', 'table', 'form','util'], function () {
+    var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+    var tableIn = table.render({
+          id: 'list',
+          elem: "#list",
+          url: '{:url("Plan/planTotal")}',
+          method: 'post',
+          cols: [[
+            {type: "checkbox", fixed: "left"},
+            {field:'id', title: 'ID', width:90},
+            {field:'admin_name',minWidth: 200, title: '联盟成员'},
+            {field:'total_price',width:120, title: '团队负责人'},
+            {field:'down_price',width:120, title: '计划任务数'},
+            {field:'goods_sku',width: 120, title:'已完成数'},
+          ]],
+          page: true,
+          limit: 100,
+          limits: [10, 40, 60, 80, 100],
+        }
+    );
+
+    //监听搜索
+    form.on('submit(search)', function (data) {
+      var field = data.field;
+      //执行重载
+      table.reload('list', {
+        where: field
+      });
+    });
+  });
+</script>
+{include file="common/foot"/}

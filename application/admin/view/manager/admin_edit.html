@@ -1,0 +1,97 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>规则添加/编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">管理组</label>
+                <div class="layui-input-4">
+                    <select name="group_id" lay-verify="required">
+                        <option value=''>请选择</option>
+                        {volist name="auth_group" id="vo"}
+                        <option value="{$vo.id}" {if $info.group_id==$vo.id}selected{/if}>{$vo.name}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">管理员名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="user_name" value="{$info.user_name}" class="layui-input " lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">登录密码</label>
+                <div class="layui-input-4">
+                    <input type="password" name="password" value=""  placeholder="" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">留空不修改用户密码</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">真实姓名</label>
+                <div class="layui-input-4">
+                    <input type="text" name="real_name" value="{$info.real_name}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">手机号码</label>
+                <div class="layui-input-4">
+                    <input type="text" name="phone" value="{$info.phone}" placeholder="" class="layui-input" autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="bank_name" value="{$info.bank_name}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">收款账户开户行名称，请认真填写，做为收款账户使用</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">银行卡号</label>
+                <div class="layui-input-4">
+                    <input type="text" name="bank_number" value="{$info.bank_number}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">收款账户银行卡号，请认真填写，做为收款账户使用</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-4">
+                    {volist name="linkage.status" id="vo"}
+                    <input type="radio" name="status" value="{$key}" title="{$vo}" lay-verify="required" {if $info.status==$key}checked{elseif $key==1}checked{/if}>
+                    {/volist}
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('Manager/adminList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

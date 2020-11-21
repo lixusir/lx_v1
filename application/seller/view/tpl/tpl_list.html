@@ -1,0 +1,93 @@
+{include file="common/head"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">店铺名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="shop_name" placeholder="请输入店铺名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">商品名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="goods_name" placeholder="请输入商品名称" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+          <a class="layui-btn" href="{:url('Tpl/tplEdit')}">添加商品</a>
+        </div>
+        <table id="list" lay-filter="list"></table>
+      </div>
+    </div>
+  </div>
+<script type="text/html" id="barDemo">
+  <a href="{:url('Tpl/tplEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+  <a href="{:url('Tpl/tplEdit')}?id={{d.id}}&copy=1" class="layui-btn layui-btn-warm layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>复制商品</a>
+  <a href="{:url('Plan/planAdd')}?id={{d.id}}" class="layui-btn layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>发布计划</a>
+</script>
+  <script>
+    layui.use(['index', 'table', 'form','util'], function () {
+      var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+      var tableIn = table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Tpl/tplList")}',
+              method: 'post',
+              cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field:'id', title: '商品编号', width:90},
+                {field:'goods_name',minWidth: 130, title: '商品名称'},
+                {field:'goods_id',width:145,title:'商品ID'},
+                {field:'goods_price',width:100, title: '商品价格'},
+                {field:'shop_name',width: 200, title:'店铺名称'},
+                {field:'create_time',width:180, title:'创建日期'},
+                {title: "操作",minWidth: 330, align: "center",toolbar: "#barDemo"}
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+      );
+      //监听搜索
+      form.on('submit(search)', function (data) {
+        var field = data.field;
+        //执行重载
+        tableIn.reload({
+          where: field
+        });
+      });
+      //监听表格内的事件  如 编辑 删除等
+      table.on('tool(list)', function (obj) {
+        var data = obj.data;
+        //删除
+        if (obj.event === 'del') {
+          layer.confirm('您确定要删除该内容吗？', function (index) {
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("{:url('tplDel')}", {id: data.id}, function (res) {
+              layer.close(loading);
+              if (res.code === 1) {
+                layer.msg(res.msg, {time: 1000, icon: 1});
+                table.reload('list');
+              } else {
+                layer.msg(res.msg, {time: 1000, icon: 2});
+              }
+            },'JSON');
+            layer.close(index);
+          });
+        }
+      });
+    });
+  </script>
+{include file="common/foot"}

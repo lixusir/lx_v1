@@ -1,0 +1,108 @@
+{include file="common/head"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">店铺名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="name" placeholder="请输入店铺名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">店铺类目</label>
+            <div class="layui-input-inline">
+              <select name="cat_id">
+                <option value="">请选择</option>
+                {volist name="shop_cate" id="vo"}
+                <option value="{$key}">{$vo}</option>
+                {/volist}
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-inline">
+              <select name="status">
+                <option value="">请选择</option>
+                {volist name="linkage.status" id="vo"}
+                <option value="{$key}">{$vo}</option>
+                {/volist}
+              </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+          <a class="layui-btn" href="{:url('Shop/shopEdit')}">添加店铺</a>
+        </div>
+        <table id="list" lay-filter="list"></table>
+      </div>
+    </div>
+  </div>
+<script type="text/html" id="barDemo">
+  <a href="{:url('Shop/shopEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+</script>
+  <script>
+    layui.use(['index', 'table', 'form','util'], function () {
+      var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+      var tableIn = table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Shop/shopList")}',
+              method: 'post',
+              cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field: 'id', width: 80, title: 'ID'},
+                {field: 'name', width: 160, title: '店铺名称'},
+                {field: 'ww_number', width: 150, title: '旺旺号'},
+                {field: 'tb_shop_id', width: 200, title: '店铺编号'},
+                {field: 'shop_type_text', width: 200, title: '店铺类型'},
+                {field: 'cate_name', width: 150, title: '店铺类目'},
+                {field: 'status_text', width: 100, title: '状态'},
+                {field: 'create_time', width: 180, title: '添加时间'},
+                {title: "操作", minWidth:230, align: "center", toolbar: "#barDemo"}
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+      );
+      //监听搜索
+      form.on('submit(search)', function (data) {
+        var field = data.field;
+        //执行重载
+        tableIn.reload({
+          where: field
+        });
+      });
+      //监听表格内的事件  如 编辑 删除等
+      table.on('tool(list)', function (obj) {
+        var data = obj.data;
+        //删除
+        if (obj.event === 'del') {
+          layer.confirm('您确定要删除该内容吗？', function (index) {
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("{:url('shopDel')}", {id: data.id}, function (res) {
+              layer.close(loading);
+              if (res.code === 1) {
+                layer.msg(res.msg, {time: 1000, icon: 1});
+                table.reload('list');
+              } else {
+                layer.msg(res.msg, {time: 1000, icon: 2});
+              }
+            },'JSON');
+            layer.close(index);
+          });
+        }
+      });
+    });
+  </script>
+{include file="common/foot"}

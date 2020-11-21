@@ -1,0 +1,88 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-tab layui-tab-brief">
+            <div class="layui-tab-content">
+                <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">分类名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="cat_name" placeholder="请输入分类名称" autocomplete="off"
+                                       class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card-body">
+                    <table id="list" lay-filter="list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .list_val {
+        width: 120px;
+        height: 25px;
+        line-height: 25px;
+        border: #FC6 solid 1px
+    }
+</style>
+<script type="text/html" id="day_num">
+    <input name="day_num" data-id="{{d.id}}" class="list_val layui-input" value="{{d.day_num}}">
+</script>
+
+<script>
+    layui.use(['index', 'table', 'form'], function () {
+        var table = layui.table, form = layui.form, $ = layui.jquery;
+        table.render({
+                    id: "list",
+                    elem: "#list",
+                    url: "{:url('System/shopCate')}",
+                    method: 'post',
+                    cols: [[
+//                    {type: "checkbox", fixed: "left"},
+                        {field: 'id', width: 80, title: '分类ID'},
+                        {field: 'name', width: 350, title: '店铺分类'},
+                        {field: 'day_num', width: 350, title: '领取限制（每x天领取一次）', toolbar: "#day_num"},
+                    ]],
+                    page: true,
+                    limit: 100,
+                    limits: [10, 40, 60, 80, 100],
+                }
+        );
+
+        //分类天数设置
+        $('body').on('blur', '.list_val', function (obj) {
+            var _id = $(this).attr('data-id');
+            var _val = $(this).val();
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post('{:url("System/upCatDayNum")}', {id: _id, day_num: _val}, function (res) {
+                layer.close(loading);
+                if (res.code === 1) {
+                    layer.msg(res.msg, {time: 1000, icon: 1});
+                    //tableIn.reload();
+                } else {
+                    layer.msg(res.msg, {time: 1000, icon: 2});
+                }
+            })
+        });
+
+        //监听搜索
+        form.on('submit(search)', function (data) {
+            var field = data.field;
+            //执行重载
+            table.reload('list', {
+                where: field
+            });
+        });
+    });
+</script>
+{include file="common/foot"/}

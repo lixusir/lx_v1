@@ -1,0 +1,201 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <ul class="layui-tab-title">
+        <li {eq name="$type" value="1" } class="layui-this" {/eq}><a href="{:url('Task/taskList')}?type=1">进行中任务</a></li>
+        <li {eq name="$type" value="2" } class="layui-this" {/eq}><a href="{:url('Task/taskList')}?type=2">已完成任务</a></li>
+<!--        <li {eq name="$type" value="3" } class="layui-this" {/eq}><a href="{:url('Task/taskList')}?type=3">待审核任务</a></li>-->
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">任务编号</label>
+              <div class="layui-input-inline">
+                <input type="text" name="task_sn" placeholder="请输入任务编号" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">团队负责人</label>
+              <div class="layui-input-inline">
+                <input type="text" name="tuan_user_name" placeholder="请输入团队负责人名称" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">业务员</label>
+              <div class="layui-input-inline">
+                <input type="text" name="user_name" placeholder="请输入业务员名称" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">状态</label>
+              <div class="layui-input-inline">
+                <select name="status">
+                  <option value="">请选择</option>
+                  {foreach name="linkage.status" key="key" item="item"}
+                  <option value="{$key}">{$item}</option>
+                  {/foreach}
+                </select>
+              </div>
+            </div>
+            <div class="layui-inline">
+              <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-card-body">
+          <div class="layui-card-header layuiadmin-card-header-auto">
+            <a class="layui-btn layui-btn-warm layuiadmin-btn-list" data-type="verifyTask" >批量审核</a>
+            <a class="layui-btn layui-btn-danger layuiadmin-btn-list" data-type="cancelTask" >批量取消任务</a>
+          </div>
+          <style>.layui-table-cell{height:60px;line-height: 60px;}</style>
+          <table id="list" lay-filter="list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="barDemo">
+  <a href="{:url('Task/taskEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>查看/审核</a>
+</script>
+<script type="text/html" id="status">
+  {{# if(d.status==1){ }}
+  <button class="layui-btn  layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==0) { }}
+  <button class="layui-btn layui-btn-primary layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==2) { }}
+  <button class="layui-btn layui-btn-warm layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==4) { }}
+  <button class="layui-btn layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else { }}
+  <button class="layui-btn layui-btn-danger layui-btn-xs">{{d.status_text}}</button>
+  {{#  } }}
+</script>
+<script type="text/html" id="taskPic">
+  <img src="{{d.task_pic}}" width="60" height="60" />
+</script>
+<script>
+  layui.use(['index', 'table', 'form','util'], function () {
+    var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+    var tableIn = table.render({
+          id: 'list',
+          elem: "#list",
+          url: '{:url("Task/taskList")}?type={$type}',
+          method: 'post',
+          cols: [[
+            {type: "checkbox", fixed: "left"},
+            {field:'id', title: 'ID', width:90},
+            {field:'task_sn',minWidth: 150, title: '任务编号'},
+            {field:'task_pic', align:'center', title: '任务图片',toolbar:"#taskPic"},
+            {field:'superior_name',width:130, title: '责任人'},
+            {field:'create_time',width:160, title:'分配日期'},
+            {field:'tuan_user_name',width:130, title:'团队负责人'},
+            {field:'user_name',minWidth: 130, title: '业务员'},
+            {field:'status',width:100, title:'任务状态',toolbar:"#status"},
+            {field:'city_name',width:120, title: '任务区域'},
+            {field:'order_count', title: '商品数'},
+            {field:'remarks',width:120, title: '备注'},
+            {title: "操作",minWidth: 100, align: "center",toolbar: "#barDemo"}
+          ]],
+          page: true,
+          limit: 100,
+          limits: [10, 40, 60, 80, 100],
+        }
+    );
+
+    //监听搜索
+    form.on('submit(search)', function (data) {
+      var field = data.field;
+      //执行重载
+      table.reload('list', {
+        where: field
+      });
+    });
+
+    //监听表格内的事件  如 编辑 删除等
+    table.on('tool(list)', function (obj) {
+      var data = obj.data;
+      //取消
+      if (obj.event === 'cancel') {
+        layer.confirm('您确定要取消此任务吗？', function (index) {
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('taskCancel')}", {id: data.id}, function (res) {
+            layer.close(loading);
+            if (res.code === 1) {
+              layer.msg(res.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg('操作失败！', {time: 1000, icon: 2});
+            }
+          });
+          layer.close(index);
+        });
+      }
+    });
+    $('.layui-btn.layuiadmin-btn-list').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+
+    var active = {
+      //取消任务单
+      cancelTask: function () {
+        var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        if (ids.length === 0) {
+          return layer.msg('请选择要取消的任务单');
+        }
+        layer.confirm('确认要取消选中任务吗？', {icon: 3}, function (index) {
+          layer.close(index);
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('taskCancel')}", {ids: ids,sub_type:1}, function (data) {
+            layer.close(loading);
+            if (data.code === 1) {
+              layer.msg(data.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg(data.msg, {time: 1500, icon: 2});
+            }
+          });
+        });
+      },
+      //审核任务单
+      verifyTask: function () {
+        var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        if (ids.length === 0) {
+          return layer.msg('请选择要审核的任务单');
+        }
+        layer.confirm('确认要审核选中任务吗？', {icon: 3}, function (index) {
+          layer.close(index);
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('taskVerify')}", {ids: ids}, function (data) {
+            layer.close(loading);
+            if (data.code === 1) {
+              layer.msg(data.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg(data.msg, {time: 1500, icon: 2});
+            }
+          });
+        });
+      }
+    };
+
+  });
+</script>
+{include file="common/foot"/}

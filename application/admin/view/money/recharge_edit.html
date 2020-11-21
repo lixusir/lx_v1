@@ -1,0 +1,116 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>充值编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">充值金额</label>
+                <div class="layui-input-4">
+                    <input type="text" name="money" lay-verify="required" value="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">付款人姓名</label>
+                <div class="layui-input-4">
+                    <input type="text" name="real_name" lay-verify="required" value="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">转账凭证</label>
+                <input type="hidden" name="cert_pic"  lay-verify="required" value="" id="cert_pic">
+                <div class="layui-input-block">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-primary" id="upload_btn"><i
+                                class="icon icon-upload3"></i>点击上传
+                        </button>
+                        <div class="layui-upload-list">
+                            <div class="item">
+                                <div class="pic">
+                                    <img class="layui-upload-img" src="__STATIC__/images/no_image.gif" id="viewPic">
+                                </div>
+                                <div class="text">上传预览</div>
+                            </div>
+                            <div class="item">
+                                <div class="pic">
+                                    <img class="layui-upload-img" src="__STATIC__/images/tpl_eg.jpg">
+                                </div>
+                                <div class="text">示例图</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">转入账户</label>
+                <div class="layui-input-4">
+                    <table style="margin-left: 10px;margin-top: 0px;" class="layui-table">
+                        <thead>
+                        <tr>
+                            <th>账户名</th>
+                            <th>银行名称</th>
+                            <th>账号</th>
+                        </tr>
+                        </thead>
+                        <tr>
+                            <td><input type="hidden" name="bank_id" value=""/>{$info.real_name}</td>
+                            <td>{$info.bank_name}</td>
+                            <td>{$info.bank_number}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="layui-form-mid layui-word-aux red"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('Account/rechargeList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer','upload'], function () {
+        var form = layui.form, $ = layui.jquery,upload = layui.upload;
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload_btn',
+            url: '{:url("UpFiles/upload")}?type=recharge',
+            before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#viewPic').attr('src', result); //图片链接（base64）
+                });
+            },
+            done: function(res){
+                //上传成功
+                if(res.code>0){
+                    $('#cert_pic').val(res.url);
+                }else{
+                    //如果上传失败
+                    return layer.msg('上传失败');
+                }
+            }
+        });
+    });
+</script>
+{include file="common/foot"}

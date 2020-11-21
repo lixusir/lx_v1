@@ -1,0 +1,100 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>系统配置</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">业务端修改会员名及差价时间</label>
+                <div class="layui-input-4">
+                    <input type="text" name="edit_name_time" value="{$info.edit_name_time}" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">单位：小时 （系统将在设定的时间关闭修改功能）</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">业务前端风格</label>
+                <div class="layui-input-4 template-radio">
+                    {volist name="linkage.template" id="vo"}
+                    <input type="radio" name="template" value="{$key}" title="<p>风格{$key}</p><img src='{$vo}' />" {if $info.template==$key}checked{/if}>
+                    {/volist}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">任务组合一数</label>
+                <div class="layui-input-4">
+                    <input type="text" name="task_unite" value="{$info.task_unite}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">自动生成任务组合一数，例如 5合一，此处填写5</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">任务组合价格上限</label>
+                <div class="layui-input-4">
+                    <input type="text" name="task_max_money" value="{$info.task_max_money}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">自动生成任务组总金额上限</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">每月提现次数</label>
+                <div class="layui-input-4">
+                    <input type="text" name="month_cash_num" value="{$info.month_cash_num}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">单位：次,每月最多能提现次数</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">每天提现次数</label>
+                <div class="layui-input-4">
+                    <input type="text" name="day_cash_num" value="{$info.day_cash_num}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">单位：次,每天最多能提现次数</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">二维码生成开关</label>
+                <div class="layui-input-1">
+                    <input type="checkbox" name="is_goods_code" lay-skin="switch" lay-text="开启|关闭" {if $info.is_goods_code==1} checked {/if}>
+                </div>
+                <div class="layui-form-mid layui-word-aux">控制是否生成商品搜索二维码</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">邀请注册开关</label>
+                <div class="layui-input-1">
+                    <input type="checkbox" {eq name="info.is_invite" value="1" } checked {/eq} name="is_invite" lay-skin="switch" lay-text="开启|关闭">
+                </div>
+                <div class="layui-form-mid layui-word-aux">控制刷手端是否可以邀请注册</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:250px;">邀请链接失效时间</label>
+                <div class="layui-input-4">
+                    <input type="text" name="invite_time" value="{$info.invite_time}" placeholder="" class="layui-input" lay-verify="required" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux red">单位：小时,邀请注册链接将在设置的值后失效，系统默认1小时</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

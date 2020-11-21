@@ -1,0 +1,94 @@
+{include file="common/head"/}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>佣金设置</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">商家佣金</li>
+                {if $Think.session.admin_id==1}
+                <li class="">粉丝佣金</li>
+                <li class="">好评佣金</li>
+                {/if}
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    {foreach name="$commission[2]" key="key" item="item"}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">{$item.name}</label>
+                        <div class="layui-input-2">
+                            <input type="text" name="comm[{$item.id}]" value="{$item.val}" placeholder="请输入佣金金额"  class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red">
+                            元
+                        </div>
+                    </div>
+                    {/foreach}
+                </div>
+                {if $Think.session.admin_id==1}
+                <div class="layui-tab-item">
+                    {foreach name="$commission[1]" key="key" item="item"}
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">{$item.name}</label>
+                        <div class="layui-input-2">
+                            <input type="text" name="comm[{$item.id}]" value="{$item.val}" placeholder="请输入佣金金额"  class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red">
+                            元
+                        </div>
+                    </div>
+                    {/foreach}
+                </div>
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label style="width: 160px;" class="layui-form-label">指定好评刷手佣金</label>
+                        <div class="layui-input-2">
+                            <input type="text" name="user_comment_money" value="{$config.user_comment_money|default=1}" placeholder="指定好评刷手佣金"  class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red">
+                            元 &nbsp;&nbsp; 完成好评后，刷手获得奖励
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label style="width: 160px;" class="layui-form-label">指定好评商家佣金</label>
+                        <div class="layui-input-2">
+                            <input type="text" name="seller_comment_money" value="{$config.seller_comment_money|default=3}" placeholder="指定好评商家佣金"  class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red">
+                            元 &nbsp;&nbsp; 商家指定好评需扣除的佣金
+                        </div>
+                    </div>
+                </div>
+                {/if}
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">确定保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer', 'laydate','upload'], function () {
+        var form = layui.form, $ = layui.jquery, laydate = layui.laydate,upload = layui.upload;
+        //提交模板
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("{:url('System/Commission')}", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+
+    });
+</script>
+{include file="common/foot"/}

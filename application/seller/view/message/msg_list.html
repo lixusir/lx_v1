@@ -1,0 +1,91 @@
+{include file="common/head"/}
+<div class="layui-fluid" id="LAY-app-message">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <ul class="layui-tab-title">
+        <li class="layui-this">全部消息</li>
+        <!--<li>通知<span class="layui-badge">6</span></li>-->
+        <!--<li>私信</li>-->
+      </ul>
+      <div class="layui-tab-content">
+
+        <div class="layui-tab-item layui-show">
+          <div style="margin-bottom: 10px;">
+            <button class="layui-btn layuiadmin-btn-list layui-btn-primary layui-btn-sm " data-type="ready">
+              标记已读
+            </button>
+          </div>
+          <table id="list" lay-filter="list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/html" id="title">
+  <div class="layui-table-cell laytable-cell-1-title">
+    {{# if(d.is_read==1){ }}
+    <a target="{{d.target}}" href="{{d.jump_url}}">{{d.title}}</a>
+    {{# } else { }}
+    <a target="{{d.target}}" style="font-weight: bold;" href="{{d.jump_url}}">{{d.title}}</a>
+    {{# } }}
+  </div>
+</script>
+
+<script>
+  layui.use(['index', 'table', 'form', 'laydate'], function () {
+    var table = layui.table, form = layui.form, $ = layui.jquery;
+    table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Message/msgList")}',
+              method: 'post',
+              cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field: 'title', title: '公告标题', toolbar: "#title"},
+                {field: 'create_time', minWidth: 180, title: '创建时间'},
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+    );
+
+    $('.layui-btn.layuiadmin-btn-list').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+    var active = {
+      //标记已读
+      ready: function () {
+        var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        if (ids.length === 0) {
+          return layer.msg('请选择要操作的选项');
+        }
+        layer.confirm('您确定要将消息标记为已读？', {icon: 3}, function (index) {
+          layer.close(index);
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('setMsgStatus')}", {ids: ids}, function (data) {
+            layer.close(loading);
+            if (data.code === 1) {
+              layer.msg(data.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg(data.msg, {time: 1000, icon: 2});
+            }
+          });
+        });
+      }
+    };
+
+
+  });
+</script>
+
+{include file="common/foot"/}

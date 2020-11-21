@@ -1,0 +1,118 @@
+{include file="common/head"}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>店铺编辑</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab-content">
+            <div class="layui-form-item">
+                <label class="layui-form-label">商户名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="seller_name" value="{$info.seller_name}" lay-verify="required" placeholder="请输入商户名" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux">*必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺名称</label>
+                <div class="layui-input-4">
+                    <input type="text" name="name" value="{$info.name}" lay-verify="required" placeholder="请输入店铺名称" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux">*必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺编号</label>
+                <div class="layui-input-4">
+                    <input type="text" name="tb_shop_id" value="{$info.tb_shop_id}" lay-verify="required" placeholder="请输入店铺编号" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux">*必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">旺旺号</label>
+                <div class="layui-input-4">
+                    <input type="text" name="ww_number" value="{$info.ww_number}" lay-verify="required" placeholder="请输入旺旺号" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux">*必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺链接</label>
+                <div class="layui-input-4">
+                    <input type="text" name="shop_url" value="{$info.shop_url}" lay-verify="required" placeholder="请输入店铺链接" class="layui-input" autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux">*必填</div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺类型</label>
+                <div class="layui-input-4">
+                    <select lay-verify="required" name="shop_type">
+                        <option value=''>请选择</option>
+                        {volist name="linkage.shop_type" id="vo"}
+                        <option value="{$key}" {if $info.shop_type==$key}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺类目</label>
+                <div class="layui-input-4">
+                    <select lay-verify="required" name="cat_id">
+                        <option value=''>请选择</option>
+                        {volist name="shop_cate" id="vo"}
+                        <option value="{$vo.id}" {if $info.cat_id==$vo.id}selected{/if}>{$vo.name}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺状态</label>
+                <div class="layui-input-inline">
+                    <select lay-verify="required" name="status">
+                        <option value=''>请选择</option>
+                        {volist name="linkage.status" id="vo"}
+                        <option value="{$key}" {if $info.status==$key}selected{/if}>{$vo}</option>
+                        {/volist}
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width:30%;">
+                    <label class="layui-form-label" style="width:140px;">每日单量上限</label>
+                    <div class="layui-input-4">
+                        <input type="text" name="daily_limit" value="{$info.daily_limit}"  placeholder="请输入每日单量上限" class="layui-input" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">店铺备注</label>
+                <div class="layui-input-4">
+                    <textarea name="remarks" placeholder="" class="layui-textarea">{$info.remarks}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="hidden" name="id" value="{$info.id}"/>
+                <input type="hidden" name="seller_id" value="{$info.seller_id}"/>
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">立即提交</button>
+                <a href="{:url('Seller/shopList')}" class="layui-btn layui-btn-primary">返回列表</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form, $ = layui.jquery
+        //提交
+        form.on('submit(submit)', function (data) {
+            loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code > 0) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+    });
+</script>
+{include file="common/foot"}

@@ -1,0 +1,115 @@
+{include file="common/head"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">店铺名称</label>
+            <div class="layui-input-inline">
+              <input type="text" name="shop_name" placeholder="请输入店铺名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">淘宝号</label>
+            <div class="layui-input-inline">
+              <input type="text" name="tb_user" placeholder="请输入淘宝号" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">订单编号</label>
+            <div class="layui-input-inline">
+              <input type="text" name="tb_order_sn" placeholder="请输入订单编号" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+            <a lay-submit lay-filter="export" class="layui-btn" >
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>批量导出</a>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <table id="list" lay-filter="list"></table>
+      </div>
+    </div>
+  </div>
+<script type="text/html" id="barDemo">
+  <a href="{:url('Order/orderView')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-form"></i>查看订单</a>
+</script>
+<script type="text/html" id="status">
+  {{# if(d.status==1){ }}
+  <button class="layui-btn  layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==0) { }}
+  <button class="layui-btn layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==2) { }}
+  <button class="layui-btn layui-btn-warm layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else { }}
+  <button class="layui-btn layui-btn-danger layui-btn-xs">{{d.status_text}}</button>
+  {{#  } }}
+</script>
+  <script>
+    layui.use(['index', 'table', 'form','util'], function () {
+      var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+      var tableIn = table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Order/orderList")}',
+              method: 'post',
+              cols: [[
+                {type: "checkbox", fixed: "left"},
+                {field: "id", title: "订单ID", minWidth: 90},
+                {field: "plan_id", width: 100, title: "计划编号"},
+                {field: "shop_name", width: 160, title: "店铺名称"},
+                {field: "goods_id", width: 200, title: "宝贝ID"},
+                {field: "keyword",width:160, title: "关键字"},
+                {field: "tb_user",width:160, title: "淘宝号"},
+                {field: "tb_order_sn",width:160, title: "订单号"},
+                {field: "money",width:120, title: "预付金额"},
+                {field: "down_price",width:120, title: "实际下单金额"},
+                {field: 'create_time', width: 180, title: '创建时间'},
+                {field: 'status', width: 100, title: '状态',toolbar:"#status"},
+                {title: "操作", minWidth:130, align: "center", toolbar: "#barDemo"}
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+      );
+      //监听搜索
+      form.on('submit(search)', function (data) {
+        var field = data.field;
+        //执行重载
+        tableIn.reload({
+          where: field
+        });
+      });
+      //导出订单
+      form.on('submit(export)', function (data) {
+        var field = data.field;
+        var checkStatus = table.checkStatus('list');
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        var where=[];
+        layer.confirm('确定要执行导出？', {icon: 3}, function (index) {
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('Order/exportOrder')}", {ids: ids,where:field}, function (res) {
+            layer.close(loading);
+            if (res.code === 1) {
+              layer.msg(res.msg, {time: 1000, icon: 1}, function () {
+                window.location.href = res.url;
+              });
+            } else {
+              layer.msg(res.msg, {time: 1000, icon: 2});
+            }
+          });
+          layer.close(index);
+        });
+      });
+
+    });
+  </script>
+{include file="common/foot"}

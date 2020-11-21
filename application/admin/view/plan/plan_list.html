@@ -1,0 +1,200 @@
+{include file="common/head"/}
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-tab layui-tab-brief">
+      <ul class="layui-tab-title">
+        <li {eq name="$type" value="1" } class="layui-this" {/eq}><a href="{:url('Plan/planList')}?type=1">当天计划</a></li>
+        <li {eq name="$type" value="2" } class="layui-this" {/eq}><a href="{:url('Plan/planList')}?type=2">历史计划</a></li>
+        <li {eq name="$type" value="3" } class="layui-this" {/eq}><a href="{:url('Plan/planList')}?type=3">待审核计划</a></li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <label class="layui-form-label">商品名称</label>
+              <div class="layui-input-inline">
+                <input type="text" name="goods_name" placeholder="请输入商品名称" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">宝贝ID</label>
+              <div class="layui-input-inline">
+                <input type="text" name="goods_id" placeholder="请输入宝贝ID" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">关键字</label>
+              <div class="layui-input-inline">
+                <input type="text" name="keyword" placeholder="请输入关键字" class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">店铺名称</label>
+              <div class="layui-input-inline">
+                <input type="text" name="shop_name" placeholder="请输入店铺名称" autocomplete="off"
+                       class="layui-input">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <label class="layui-form-label">状态</label>
+              <div class="layui-input-inline">
+                <select name="status">
+                  <option value="">请选择</option>
+                  {foreach name="linkage.status" key="key" item="item"}
+                  <option value="{$key}">{$item}</option>
+                  {/foreach}
+                </select>
+              </div>
+            </div>
+            <div class="layui-inline">
+              <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="layui-card-body">
+          <div class="layui-card-header layuiadmin-card-header-auto">
+            <a class="layui-btn layui-btn-warm layuiadmin-btn-list" data-type="verifyPlan" >批量审核</a>
+            <a class="layui-btn layui-btn-danger layuiadmin-btn-list" data-type="cancelPlan" >批量取消计划</a>
+          </div>
+          <table id="list" lay-filter="list"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/html" id="barDemo">
+  <a href="{:url('Plan/planEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>审核</a>
+</script>
+<script type="text/html" id="status">
+  {{# if(d.status==1){ }}
+  <button class="layui-btn  layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==0) { }}
+  <button class="layui-btn layui-btn-primary layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else if(d.status==2) { }}
+  <button class="layui-btn layui-btn-warm layui-btn-xs">{{d.status_text}}</button>
+  {{#  } else { }}
+  <button class="layui-btn layui-btn-danger layui-btn-xs">{{d.status_text}}</button>
+  {{#  } }}
+</script>
+<script>
+  layui.use(['index', 'table', 'form','util'], function () {
+    var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+    var tableIn = table.render({
+          id: 'list',
+          elem: "#list",
+          url: '{:url("Plan/planList")}?type={$type}',
+          method: 'post',
+          cols: [[
+            {type: "checkbox", fixed: "left"},
+            {field:'id', title: 'ID', width:90},
+            {field:'goods_name',minWidth: 200, title: '商品名称'},
+            {field:'total_price',width:120, title: '展示价格'},
+            {field:'down_price',width:120, title: '下单价格'},
+            {field:'goods_sku',width: 120, title:'SKU'},
+            {field:'goods_num',width: 80, title:'数量'},
+            {field:'shop_name',width: 150, title:'店铺名称'},
+            {field:'begin_time_text',width:120, title:'截止日期'},
+            {field:'keyword',width:120, title:'关键字'},
+            {field:'coupon_price',width:120, title:'使用优惠券'},
+            {field:'status',width:100, title:'状态',toolbar:"#status"},
+            {title: "操作",minWidth: 200, align: "center",toolbar: "#barDemo"}
+          ]],
+          page: true,
+          limit: 100,
+          limits: [10, 40, 60, 80, 100],
+        }
+    );
+
+    //监听搜索
+    form.on('submit(search)', function (data) {
+      var field = data.field;
+      //执行重载
+      table.reload('list', {
+        where: field
+      });
+    });
+
+    //监听表格内的事件  如 编辑 删除等
+    table.on('tool(list)', function (obj) {
+      var data = obj.data;
+      //取消
+      if (obj.event === 'cancel') {
+        layer.confirm('您确定要取消此计划吗？', function (index) {
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('planCancel')}", {id: data.id}, function (res) {
+            layer.close(loading);
+            if (res.code === 1) {
+              layer.msg(res.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg('操作失败！', {time: 1000, icon: 2});
+            }
+          });
+          layer.close(index);
+        });
+      }
+    });
+    $('.layui-btn.layuiadmin-btn-list').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+
+    var active = {
+      //取消计划
+      cancelPlan: function () {
+        var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        if (ids.length === 0) {
+          return layer.msg('请选择要取消的计划');
+        }
+        layer.confirm('确认要取消选中计划吗？', {icon: 3}, function (index) {
+          layer.close(index);
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('planCancel')}", {ids: ids,sub_type:1}, function (data) {
+            layer.close(loading);
+            if (data.code === 1) {
+              layer.msg(data.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg(data.msg, {time: 1500, icon: 2});
+            }
+          });
+        });
+      },
+      //审核计划
+      verifyPlan: function () {
+        var checkStatus = table.checkStatus('list'); //test即为参数id设定的值
+        var ids = [];
+        $(checkStatus.data).each(function (i, o) {
+          ids.push(o.id);
+        });
+        if (ids.length === 0) {
+          return layer.msg('请选择要审核的计划');
+        }
+        layer.confirm('确认要审核选中计划吗？', {icon: 3}, function (index) {
+          layer.close(index);
+          var loading = layer.load(1, {shade: [0.1, '#fff']});
+          $.post("{:url('planVerify')}", {ids: ids,sub_type:1}, function (data) {
+            layer.close(loading);
+            if (data.code === 1) {
+              layer.msg(data.msg, {time: 1000, icon: 1});
+              table.reload('list');
+            } else {
+              layer.msg(data.msg, {time: 1500, icon: 2});
+            }
+          });
+        });
+      }
+    };
+
+  });
+</script>
+{include file="common/foot"/}

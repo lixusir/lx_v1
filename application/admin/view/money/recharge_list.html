@@ -1,0 +1,128 @@
+{include file="common/head"}
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">充值时间</label>
+            <div class="layui-input-inline">
+              <input type="text" name="time" id="time" placeholder="请点击选择充值时间区间" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-inline">
+            <label class="layui-form-label">审核状态</label>
+            <div class="layui-input-inline">
+              <select name="status">
+                <option value="">请选择</option>
+                {volist name="linkage.status" id="vo"}
+                <option value="{$key}">{$vo}</option>
+                {/volist}
+              </select>
+            </div>
+          </div>
+
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-list" lay-submit lay-filter="search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="layui-card-body">
+        <div class="layui-card-header layuiadmin-card-header-auto">
+          <a class="layui-btn" href="{:url('Money/rechargeEdit')}">新增充值</a>
+        </div>
+        <table id="list" lay-filter="list"></table>
+      </div>
+    </div>
+  </div>
+<script type="text/html" id="cert_pic">
+  {{# if(d.cert_pic){ }}
+  <a target="_blank" href="{{d.cert_pic}}"><img style="display: inline-block; width: 50%; height: 100%;"
+                                                src="{{d.cert_pic}}"/></a>
+  {{#  } else { }}
+  <img src="__STATIC__/common/images/image.gif"/>
+  {{# } }}
+</script>
+<script type="text/html" id="status_des">
+  {{# if(d.status==1){ }}
+  <div class="layui-table-cell laytable-cell-1-state">
+    <button class="layui-btn layui-btn-xs">{{d.status_des}}</button>
+  </div>
+  {{#  } else if(d.status==2) { }}
+  <div class="layui-table-cell laytable-cell-1-state">
+    <a class="layui-btn layui-btn-warm layui-btn-xs">{{d.status_des}}</a>
+    {{# if(d.remarks){ }}
+    <i lay-event="tips" lay-even="tips" class="layui-icon layui-icon-tips"></i>
+    {{# } }}
+  </div>
+  {{#  } else { }}
+  <div class="layui-table-cell laytable-cell-1-state">
+    <button class="layui-btn layui-btn-primary layui-btn-xs">{{d.status_des}}</button>
+  </div>
+  {{# } }}
+</script>
+  <script>
+    layui.use(['index', 'table', 'form','util','laydate'], function () {
+      var table = layui.table, form = layui.form,util = layui.util, $ = layui.jquery;
+      var tableIn = table.render({
+              id: 'list',
+              elem: "#list",
+              url: '{:url("Money/rechargeList")}',
+              method: 'post',
+              cols: [[
+                {field: 'id', width: 90, title: '编号ID'},
+                {field: 'real_name',width:100, title: '姓名'},
+                {field: 'seller_mobile', width: 150, title: '手机号码'},
+                {field: 'money', width: 100, title: '充值金额'},
+                {field: 'cn_money',width:100, title: '大写金额'},
+                {field: 'cert_pic', width: 105, title: '转账凭证', toolbar: "#cert_pic"},
+                {field: 'bank_account_name', width: 110, title: '转入账户名'},
+                {field: 'bank_name', width: 105, title: '转出银行名'},
+                {field: 'bank_number', minWidth: 150, title: '转入账号'},
+                {field: 'create_time', minWidth: 180, title: '申请日期'},
+                {field: 'status_des',width:140, title: '审核状态', toolbar: "#status_des"},
+                {field: 'op_name', minWidth: 100, title: '操作人'},
+              ]],
+              page: true,
+              limit: 100,
+              limits: [10, 40, 60, 80, 100],
+            }
+      );
+      var laydate = layui.laydate;
+      //日期范围
+      laydate.render({
+        elem: '#time'
+        , range: true
+      });
+      //监听搜索
+      form.on('submit(search)', function (data) {
+        var field = data.field;
+        //执行重载
+        tableIn.reload({
+          where: field
+        });
+      });
+      //监听表格内的事件  如 编辑 删除等
+      table.on('tool(list)', function (obj) {
+        var data = obj.data;
+        //删除
+        if (obj.event === 'del') {
+          layer.confirm('您确定要删除该内容吗？', function (index) {
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            $.post("{:url('msgDel')}", {id: data.id}, function (res) {
+              layer.close(loading);
+              if (res.code === 1) {
+                layer.msg(res.msg, {time: 1000, icon: 1});
+                table.reload('list');
+              } else {
+                layer.msg(res.msg, {time: 1000, icon: 2});
+              }
+            },'JSON');
+            layer.close(index);
+          });
+        }
+      });
+    });
+  </script>
+{include file="common/foot"}

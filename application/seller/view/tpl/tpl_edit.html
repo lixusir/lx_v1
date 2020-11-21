@@ -1,0 +1,313 @@
+{include file="common/head"/}
+<div class="admin-main fadeInUp animated">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>添加/编辑商品</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">基本信息</li>
+                <li>搜索词设置</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品链接<span class="x-red">*</span></label>
+                        <div class="layui-input-4">
+                            <input type="text" name="goods_url" value="{$info.goods_url}" lay-verify="required"
+                                   placeholder="" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品标题<span class="x-red">*</span></label>
+                        <div class="layui-input-4">
+                            <input type="text" name="goods_name" value="{$info.goods_name}" lay-verify="required"
+                                   placeholder="" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品价格<span class="x-red">*</span></label>
+                        <div class="layui-input-4">
+                            <input type="text" name="goods_price" value="{$info.goods_price}" lay-verify="required"
+                                   placeholder="" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品ID<span class="x-red">*</span></label>
+                        <div class="layui-input-4">
+                            <input type="text" name="goods_id" value="{$info.goods_id}" lay-verify="required"
+                                   placeholder="" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid layui-word-aux red"></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">商品主图<span class="x-red">*</span></label>
+                        <input type="hidden" name="goods_pic"  lay-verify="required" value="{$info.goods_pic}" id="goods_pic">
+                        <input type="hidden" name="goods_thumb"  value="{$info.goods_thumb}" id="goods_thumb">
+                        <div class="layui-input-block">
+                            <div class="layui-upload">
+                                <button type="button" class="layui-btn layui-btn-primary" id="upload_btn"><i
+                                        class="icon icon-upload3"></i>点击上传
+                                </button>
+                                <div class="layui-upload-list">
+                                    <div class="item">
+                                        <div class="pic">
+                                            <img class="layui-upload-img" src="{if $info.goods_pic}{$info.goods_pic}{else}__STATIC__/images/no_image.gif{/if}" id="viewPic">
+                                        </div>
+                                        <div class="text">上传预览</div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="pic">
+                                            <img class="layui-upload-img" src="__STATIC__/images/tpl_eg.jpg">
+                                        </div>
+                                        <div class="text">示例图</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">店铺<span class="x-red">*</span></label>
+                            <div style="width: 300px;" class="layui-input-inline">
+                                <select lay-verify="required" id="shop_id" lay-filter="shop_id" lay-search="" name="shop_id">
+                                    <option value=''>请选择</option>
+                                    {volist name="shops" id="vo"}
+                                    <option value="{$vo.id}" {if $info.shop_id==$vo.id}selected{/if}>{$vo.name}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">排序方式</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <select lay-filter="sort_type" name="sort_type">
+                                    <option value="">请选择</option>
+                                    {foreach name="linkage.sort_type" key="key" item="vo"}
+                                    <option value="{$key}" {if condition="$info['sort_type'] eq $key" }selected{elseif $key==1}selected{/if}>{$vo}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                            <div class="layui-form-mid">排名区间：</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="sort_min" value="{$info.sort_min|default='1'}" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid">~</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="sort_max" value="{$info.sort_max|default='100'}" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">省/市</label>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <select lay-filter="province" name="province">
+                                    <option value="">请选择省份</option>
+                                    {volist name="provinces" id="vo"}
+                                    <option value="{$vo.provinceid}" {if condition="$info['province'] eq $vo.provinceid" }selected{/if}>{$vo.province}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                            <div class="layui-input-inline" style="width: 150px;">
+                                <select lay-filter="city" name="city" id="city">
+                                    <option value="">请选择城市</option>
+                                    {volist name="cities" id="vo"}
+                                    <option value="{$vo.cityid}" {if condition="$info['city'] eq $vo.cityid" }selected{/if}>{$vo.city}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">价格区间</label>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="price_min" value="{$info.price_min}" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid">~</div>
+                            <div class="layui-input-inline" style="width: 100px;">
+                                <input type="text" name="price_max" value="{$info.price_max}" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">浏览时间</label>
+                            <div class="layui-input-inline">
+                                <select id="view_time" name="view_time">
+                                    <option value="">请选择</option>
+                                    {foreach name="linkage.view_time" key="key" item="vo"}
+                                    <option value="{$key}" {if condition="$info['view_time'] eq $key" }selected{/if}>{$vo}</option>
+                                    {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">其他要求</label>
+                        <div class="layui-input-4">
+                            <textarea name="remarks"  class="layui-textarea">{$info.remarks|default='搜索指定关键词，同关键词3个类似宝贝价格相近浏览3款，每款浏览1-2分钟；找到主宝贝浏览2-3分钟，店内看2-3款副宝贝，每款浏览1-2分钟。'}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-tab-item">
+                    <div class="layui-form-item">
+                        <label style="width: 130px;" class="layui-form-label"><span class="x-red">*</span>搜索关键字：</label>
+                        <div class="layui-input-inline">
+                            &nbsp;&nbsp;
+                            <button type="button" class="layui-btn diff_btn layui-btn-normal">增加一个
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-6">
+                            <table id="keyword_diff" class="layui-table">
+                                <thead>
+                                <tr>
+                                    <th>关键字</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                {notempty name="word"}
+                                {foreach name="word" key="key" item="item"}
+                                <tr>
+                                    <td><input class="layui-input" lay-verify="required" name="keyword[]" value="{$item}"></td>
+                                    <td><a onclick="delCols($(this))" href="javascript:;">删除</a></td>
+                                </tr>
+                                {/foreach}
+                                {/notempty}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <input type="hidden" name="id" value="{$info.id}"/>
+                        <button type="button" class="layui-btn" lay-submit="" data-type="submit" lay-filter="submit">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <a href="{:url('Tpl/tplList')}" class="layui-btn layui-btn-primary">返回列表</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+<img alt="" style="display:none" id="displayimg" src="" />
+<script src="__STATIC__/js/jquery.2.1.1.min.js"></script>
+
+<script>
+    layui.use(['form', 'layer', 'laydate','upload'], function () {
+        var form = layui.form, $ = layui.jquery, laydate = layui.laydate,upload = layui.upload;
+        lay('.cus_time').each(function () {
+            laydate.render({
+                elem: this,
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+        //提交模板
+        form.on('submit(submit)', function (data) {
+            var loading = layer.load(1, {shade: [0.1, '#fff']});
+            data.field.tpl_id = "{$info.id}";
+            data.field.sub_type=$(this).data('type');
+            $.post("", data.field, function (res) {
+                layer.close(loading);
+                if (res.code == 1) {
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function () {
+                        location.href = res.url;
+                    });
+                } else {
+                    layer.msg(res.msg, {time: 1800, icon: 2});
+                }
+            });
+        });
+        //获取城市联动
+        form.on('select(province)',function(data){
+            var provinceid = data.value;
+            $.post('{:url("Common/getCityAreaTree")}',{provinceid:provinceid},function(res){
+                var city = '<option value="">请选择城市</option>';
+                for(var i=0; i<res.length; i++){
+                    city += "<option value='"+ res[i]['cityid']+"'>"+ res[i]['city']+ "</option>";
+                }
+                $("#city").empty().append(city);
+                form.render();
+            },'JSON');
+
+        });
+        //搜索词添加
+        //找茬设置 新增行
+        $(".diff_btn").on('click', function () {
+            var _html = '<tr>';
+            _html += '<td><input class="layui-input" lay-verify="required" name="keyword[]" value=""/></td>';
+            _html += '<td><a onclick="delCols($(this))"  href="javascript:;">删除</a></td>';
+            _html += '</tr>';
+            $("#keyword_diff").append(_html);
+        });
+        //删除行
+        function delCols(obj) {
+            obj.parents('tr').remove();
+        }
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload_btn',
+            url: '{:url("UpFiles/upload")}',
+            data:{from:'goods'},
+            before: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#viewPic').attr('src', result); //图片链接（base64）
+                });
+            },
+            done: function(res){
+                //上传成功
+                if(res.code>0){
+                    $('#goods_pic').val(res.url);
+                    $('#goods_thumb').val(res.url);
+                }else{
+                    //如果上传失败
+                    return layer.msg('上传失败');
+                }
+            },
+            error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+        //放大图片
+        $(".layui-upload-img").on('click',function () {
+            var _src=$(this).attr('src');
+            $("#displayimg").attr("src", _src);
+            var width=$("#displayimg").width();
+            var height=$("#displayimg").height();
+            if(height > $(window).height()){
+                height=($(window).height() - 50);
+            }
+            layer.open({
+                type: 1,
+                title: false,
+                closeBtn: 0,
+                shadeClose: true,
+                area: [width + 'px', height + 'px'], //宽高
+                content: "<img src=" + _src + " />"
+            });
+        });
+
+    });
+
+
+
+</script>
+{include file="common/foot"/}
