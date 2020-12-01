@@ -1,8 +1,29 @@
-{include file="common/head"}
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:70:"E:\wwwlog\lx_v1\public/../application/admin\view\system\rule_list.html";i:1605942302;s:55:"E:\wwwlog\lx_v1\application\admin\view\common\head.html";i:1604024720;s:55:"E:\wwwlog\lx_v1\application\admin\view\common\foot.html";i:1604024720;}*/ ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>地推系统后台管理系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/style.css" media="all">
+  <script src="/static/layuiadmin/layui/layui.js"></script>
+  <script>
+    layui.config({
+      base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+      index: 'lib/index' //主入口模块
+    }).use('index');
+  </script>
+</head>
+<body class="layui-layout-body">
   <div class="layui-fluid">
     <div class="layui-card">
       <div class="layui-card-header layuiadmin-card-header-auto">
-        <a class="layui-btn" href="{:url('System/ruleEdit')}">添加规则</a>
+        <a class="layui-btn" href="<?php echo url('System/ruleEdit'); ?>">添加规则</a>
       </div>
       <div class="layui-card-body">
         <table id="list"></table>
@@ -10,8 +31,8 @@
     </div>
   </div>
 <script type="text/html" id="barDemo">
-  <a href="{:url('System/ruleEdit')}?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+  <a href="<?php echo url('System/ruleEdit'); ?>?id={{d.id}}" class="layui-btn layui-btn-normal layui-btn-xs"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+  <a href="<?php echo url('System/ruleDel'); ?>?id={{d.id}}" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
 </script>
 <script type="text/html" id="typeDesc">
   {{# if(d.type==1){ }}
@@ -29,7 +50,7 @@
       var tableIn = table.render({
               id: 'list',
               elem: "#list",
-              url: '{:url("System/ruleList")}',
+              url: '<?php echo url("System/ruleList"); ?>',
               method: 'post',
               cols: [[
                 {type: "checkbox", fixed: "left"},
@@ -62,7 +83,7 @@
           layer.open({
             type: 2
             ,title: '添加规则'
-            ,content: "{:url('System/ruleEdit')}"
+            ,content: "<?php echo url('System/ruleEdit'); ?>"
             ,area: ['650px', '500px']
             ,btn: ['确定', '取消']
             ,yes: function(index, layero){
@@ -81,8 +102,10 @@
         var type = $(this).data('type');
         active[type] ? active[type].call(this) : '';
       });
-
-      $('a[at..]')
     });
   </script>
-{include file="common/foot"}
+</body>
+</html>
+
+
+

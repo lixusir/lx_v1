@@ -1,0 +1,83 @@
+---------------------------------------------------------------
+[ 2020-12-01T11:24:23+08:00 ] 127.0.0.1 GET www.tp.com/admin/Index/index.html
+[运行时间：0.348187s] [吞吐率：2.87req/s] [内存消耗：3,515.95kb] [文件加载：50]
+[ info ] [ LANG ] E:\wwwlog\lx_v1\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'admin',
+    1 => 'Index',
+    2 => 'index',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => 'www.tp.com',
+  'connection' => 'keep-alive',
+  'cache-control' => 'max-age=0',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+  'accept-encoding' => 'gzip, deflate',
+  'accept-language' => 'zh-CN,zh;q=0.9',
+  'cookie' => 'PHPSESSID=cf45o00nqmnkdeqrfb0oste1h2',
+)
+[ info ] [ PARAM ] array (
+  '/admin/Index/index_html' => '',
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\admin\controller\Index->index[ E:\wwwlog\lx_v1\application\admin\controller\Index.php ]
+[ info ] [ DB ] INIT mysql
+[ info ] [ VIEW ] E:\wwwlog\lx_v1\public/../application/admin\view\index\index.html [ array (
+  0 => 'msg_count',
+  1 => 'msgNoInfo',
+  2 => 'msgIsNo',
+  3 => 'user_money',
+  4 => 'sys_rule',
+) ]
+[ info ] [ LOG ] INIT File
+---------------------------------------------------------------
+[ 2020-12-01T11:24:23+08:00 ] 127.0.0.1 GET www.tp.com/admin/Index/console.html
+[运行时间：0.086999s] [吞吐率：11.49req/s] [内存消耗：2,176.04kb] [文件加载：41]
+[ info ] [ LANG ] E:\wwwlog\lx_v1\thinkphp\lang\zh-cn.php
+[ info ] [ ROUTE ] array (
+  'type' => 'module',
+  'module' => 
+  array (
+    0 => 'admin',
+    1 => 'Index',
+    2 => 'console',
+  ),
+)
+[ info ] [ HEADER ] array (
+  'host' => 'www.tp.com',
+  'connection' => 'keep-alive',
+  'upgrade-insecure-requests' => '1',
+  'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36',
+  'accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+  'referer' => 'http://www.tp.com/admin/Index/index.html',
+  'accept-encoding' => 'gzip, deflate',
+  'accept-language' => 'zh-CN,zh;q=0.9',
+  'cookie' => 'PHPSESSID=cf45o00nqmnkdeqrfb0oste1h2',
+)
+[ info ] [ PARAM ] array (
+  '/admin/Index/console_html' => '',
+)
+[ info ] [ SESSION ] INIT array (
+  'id' => '',
+  'var_session_id' => '',
+  'prefix' => 'think',
+  'type' => '',
+  'auto_start' => true,
+)
+[ info ] [ RUN ] app\admin\controller\Index->console[ E:\wwwlog\lx_v1\application\admin\controller\Index.php ]
+[ info ] [ VIEW ] E:\wwwlog\lx_v1\public/../application/admin\view\index\console.html [ array (
+  0 => 'info',
+) ]
+[ info ] [ LOG ] INIT File

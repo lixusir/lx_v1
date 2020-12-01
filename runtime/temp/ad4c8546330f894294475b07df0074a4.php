@@ -1,4 +1,25 @@
-{include file="common/head"}
+<?php if (!defined('THINK_PATH')) exit(); /*a:3:{s:65:"E:\wwwlog\lx_v1\public/../application/admin\view\index\index.html";i:1605941280;s:55:"E:\wwwlog\lx_v1\application\admin\view\common\head.html";i:1604024720;s:55:"E:\wwwlog\lx_v1\application\admin\view\common\foot.html";i:1604024720;}*/ ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>地推系统后台管理系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layuiadmin/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="/static/layuiadmin/style/style.css" media="all">
+  <script src="/static/layuiadmin/layui/layui.js"></script>
+  <script>
+    layui.config({
+      base: '/static/layuiadmin/' //静态资源所在路径
+    }).extend({
+      index: 'lib/index' //主入口模块
+    }).use('index');
+  </script>
+</head>
+<body class="layui-layout-body">
   <div id="LAY_app">
     <div class="layui-layout layui-layout-admin">
       <div class="layui-header">
@@ -23,11 +44,11 @@
         <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
 
           <li class="layui-nav-item" lay-unselect>
-            <a lay-href="{:url('Message/msgList')}" layadmin-event="message" lay-text="消息中心">
+            <a lay-href="<?php echo url('Message/msgList'); ?>" layadmin-event="message" lay-text="消息中心">
               <i class="layui-icon layui-icon-notice"></i>
-              {if $msg_count>0}
+              <?php if($msg_count>0): ?>
               <span class="layui-badge-dot"></span>
-              {/if}
+              <?php endif; ?>
             </a>
           </li>
           <li class="layui-nav-item layui-hide-xs" lay-unselect>
@@ -42,12 +63,12 @@
           </li>
           <li class="layui-nav-item layui-hide-xs" lay-unselect>
             <a href="javascript:;">
-              <i class="layui-icon layui-icon-rmb"></i>&nbsp;可用余额：{$user_money}
+              <i class="layui-icon layui-icon-rmb"></i>&nbsp;可用余额：<?php echo $user_money; ?>
             </a>
           </li>
           <li class="layui-nav-item" lay-unselect>
             <a href="javascript:;">
-              <cite>{$Think.session.admin_name}</cite>
+              <cite><?php echo \think\Session::get('admin_name'); ?></cite>
             </a>
             <dl class="layui-nav-child">
               <dd><a lay-href="set/user/password.html">修改密码</a></dd>
@@ -73,23 +94,23 @@
           </div>
 
           <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-            {volist name="sys_rule" id="vo"}
+            <?php if(is_array($sys_rule) || $sys_rule instanceof \think\Collection || $sys_rule instanceof \think\Paginator): $i = 0; $__LIST__ = $sys_rule;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?>
             <li data-name="home" class="layui-nav-item layui-nav-itemed">
-              <a href="javascript:;" lay-tips="{$vo.name}" lay-direction="2">
-                <i class="layui-icon {$vo.icon}"></i>
-                <cite>{$vo.name}</cite>
+              <a href="javascript:;" lay-tips="<?php echo $vo['name']; ?>" lay-direction="2">
+                <i class="layui-icon <?php echo $vo['icon']; ?>"></i>
+                <cite><?php echo $vo['name']; ?></cite>
               </a>
-              {present name="vo.level"}
+              <?php if(isset($vo['level'])): ?>
               <dl class="layui-nav-child">
-                {volist name="vo.level" id="vvo"}
+                <?php if(is_array($vo['level']) || $vo['level'] instanceof \think\Collection || $vo['level'] instanceof \think\Paginator): $i = 0; $__LIST__ = $vo['level'];if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vvo): $mod = ($i % 2 );++$i;?>
                 <dd data-name="">
-                  <a lay-href="{:url($vvo.link)}">{$vvo.name}</a>
+                  <a lay-href="<?php echo url($vvo['link']); ?>"><?php echo $vvo['name']; ?></a>
                 </dd>
-                {/volist}
+                <?php endforeach; endif; else: echo "" ;endif; ?>
               </dl>
-              {/present}
+              <?php endif; ?>
             </li>
-            {/volist}
+            <?php endforeach; endif; else: echo "" ;endif; ?>
           </ul>
         </div>
       </div>
@@ -112,7 +133,7 @@
         </div>
         <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
           <ul class="layui-tab-title" id="LAY_app_tabsheader">
-            <li lay-id="home/console.html" lay-attr="{:url('Index/console')}" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
+            <li lay-id="home/console.html" lay-attr="<?php echo url('Index/console'); ?>" class="layui-this"><i class="layui-icon layui-icon-home"></i></li>
           </ul>
         </div>
       </div>
@@ -120,7 +141,7 @@
       <!-- 主体内容 -->
       <div class="layui-body" id="LAY_app_body">
         <div class="layadmin-tabsbody-item layui-show">
-          <iframe src="{:url('Index/console')}" frameborder="0" class="layadmin-iframe"></iframe>
+          <iframe src="<?php echo url('Index/console'); ?>" frameborder="0" class="layadmin-iframe"></iframe>
         </div>
       </div>
 
@@ -128,25 +149,25 @@
       <div class="layadmin-body-shade" layadmin-event="shade"></div>
     </div>
   </div>
-{if $msgIsNo>0}
-<input type="hidden" id="msg_title" value="{$msgNoInfo.title}" />
-<input type="hidden" id="msg_id" value="{$msgNoInfo.id}" />
+<?php if($msgIsNo>0): ?>
+<input type="hidden" id="msg_title" value="<?php echo $msgNoInfo['title']; ?>" />
+<input type="hidden" id="msg_id" value="<?php echo $msgNoInfo['id']; ?>" />
 <div id="msg_content" style="display:none;">
-  <div style="padding:20px;">{$msgNoInfo.content}</div>
+  <div style="padding:20px;"><?php echo $msgNoInfo['content']; ?></div>
 </div>
-{/if}
+<?php endif; ?>
 <script>
   layui.use(['form', 'layer'], function () {
     var form = layui.form, $ = layui.jquery,layer = layui.layer;
     $("#logout").on('click',function(){
-         $.post("{:url('Index/logout')}",function(res){
+         $.post("<?php echo url('Index/logout'); ?>",function(res){
                layer.msg(res.msg,{time:1500,icon:1},function(){
                    window.location.href=res.url;
                });
          });
     });
     //消息弹窗
-    var isNo = "{$msgIsNo}";
+    var isNo = "<?php echo $msgIsNo; ?>";
     if(isNo>0){
       var w=($(window).width()*0.6);
       var h=($(window).height() - 300);
@@ -162,7 +183,7 @@
         ,btnAlign: 'c' //按钮居中
         ,shade: 0 //不显示遮罩
         ,yes: function(){
-          $.post("{:url('Message/setMsgStatus')}", {ids: msg_id}, function (data) {
+          $.post("<?php echo url('Message/setMsgStatus'); ?>", {ids: msg_id}, function (data) {
             if (data.code === 1) {
               layer.closeAll();
             } else {
@@ -175,6 +196,10 @@
 
   });
 </script>
-{include file="common/foot"}
+</body>
+</html>
+
+
+
 
 
