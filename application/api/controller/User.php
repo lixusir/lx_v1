@@ -10,6 +10,7 @@ class User extends ApiBase{
      * 登录
      */
     public function login(){
+        echo 1;die;
         $regData = input('param.');
 //        dump($regData);exit;
         $userModel = new userModel();

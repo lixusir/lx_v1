@@ -7,6 +7,11 @@ class Login extends Controller{
     {
         parent::_initialize(); //
     }
+    public function set(){
+
+        return $this->fetch();
+
+    }
     /*
      * 登录
      */
@@ -18,8 +23,9 @@ class Login extends Controller{
          if(request()->isPost()){
               $posData = input('param.');
               if(!captcha_check($posData['vercode'])){
-//                   $this->error('验证码错误，请重新输入');
+                   //$this->error('验证码错误，请重新输入');
               }
+
               $adminModel = new adminModel();
               $res = $adminModel->allowField(true)->loginIn($posData);
               if($res['code']!=200){

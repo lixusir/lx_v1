@@ -151,4 +151,24 @@ class Admin extends Model{
          db('LoginLog')->insert($log_data);
          return ['code'=>200,'msg'=>'成功','data'=>$res];
      }
+
+     /*
+      * 修改密码
+      */
+
+     public function setpwd($param,$adminId){
+
+         Db::startTrans();
+         try{
+
+
+
+         }catch (\Exception $ex){
+
+
+         }
+         $setpassword = encrypt(trim($param['setpassword']));
+
+
+     }
 }

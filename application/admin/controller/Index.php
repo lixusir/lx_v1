@@ -3,6 +3,8 @@
 namespace app\admin\controller;
 use app\model\MsgUser as msgUserModel;
 use app\admin\model\Admin as adminModel;
+use app\admin\validate\Login;
+use think\Log;
 
 class Index extends AdminBase
 {
@@ -11,6 +13,39 @@ class Index extends AdminBase
         parent::_initialize(); //
     }
 
+    public function set(){
+
+
+        $adminId = session('admin_id');
+        $adminInfo = adminModel::where(['id'=>$adminId])->find();
+
+        if(request()->isPost()){
+
+            $param = input('param.');
+
+            $adminModel = new adminModel();
+
+            $data = [];
+            $data['oldPassword'] = encrypt($param['oldPassword']);
+            $data['setpassword'] = $param['setpassword'];
+            $data['repassword'] = $param['repassword'];
+            $data['password'] = $adminInfo['password'];
+
+            $login = new Login();
+
+            $result = $login->check($data);
+
+            if(!$result){
+
+                $this->error($login->getError());
+            }
+
+            $result = $adminModel -> allowField(true) -> setpwd($param,$adminId);
+
+        }
+
+        return $this->fetch('index/password');
+    }
     public function index()
     {
         //获取用户余额
@@ -25,6 +60,7 @@ class Index extends AdminBase
             'end_time'=>['egt',$now],
         ];
         $msgInfo = db('Message')->where($map)->column('id,type,title,content,platform');
+
         $msgCount = 0;
         $msgNoInfo = [];//未读弹窗消息
         $msgIsNo = 0;
@@ -67,6 +103,7 @@ class Index extends AdminBase
             'out_time' => time(),
             'out_ip' => getIpAddress(),
         ];
+
         db('LoginLog')->insert($log_data);
         session('admin_id', NULL);
         session('admin_name', NULL);

@@ -60,7 +60,7 @@
     
     <div class="layui-trans layadmin-user-login-footer">
       
-      <p>© 2019 <a href="/" target="_blank">ditui.com</a></p>
+      <p>© 2019 <a href="/" target="_blank">快递</a></p>
       <p>
         <span><a href="/" target="_blank">商家端</a></span>
         <span><a href="/" target="_blank">业务员端</a></span>
@@ -72,6 +72,7 @@
       var form = layui.form, $ = layui.jquery;
       //提交
       form.on('submit(submit)', function (data) {
+
         loading = layer.load(1, {shade: [0.1, '#fff']});
         $.post("", data.field, function (res) {
           layer.close(loading);
