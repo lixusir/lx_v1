@@ -42,6 +42,16 @@ class Index extends AdminBase
 
             $result = $adminModel -> allowField(true) -> setpwd($param,$adminId);
 
+            if($result['code'] != 200){
+
+                $this->error($result['msg']);
+
+            }else{
+
+                $this->success($result['msg']);
+
+            }
+
         }
 
         return $this->fetch('index/password');

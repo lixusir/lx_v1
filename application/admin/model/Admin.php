@@ -161,13 +161,36 @@ class Admin extends Model{
          Db::startTrans();
          try{
 
+             $error = ['code'=>0,'msg'=>'error'];
+
+            $admin_user = self::where(['id'=>$adminId])->find();
+
+            if(empty($admin_user)){
+
+                $error['msg'] = '用户不存在';
+
+                return $error;
+
+            }
+
+            $data = [];
+
+            $data['password'] = encrypt($param['setpassword']);
+
+            $cit = self::where(['id'=>$adminId])->update($data);
+
+
+            Db::commit();
+            return ['code'=>200,'msg'=>'操作成功'];
 
 
          }catch (\Exception $ex){
 
+             Db::rollback();
+
+             throw $ex;
 
          }
-         $setpassword = encrypt(trim($param['setpassword']));
 
 
      }
